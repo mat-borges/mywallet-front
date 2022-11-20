@@ -1,25 +1,51 @@
 import { CgAdd, CgRemove } from 'react-icons/cg';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
+import { BASE_URL } from '../../constants/urls.js';
 import { GoSignOut } from 'react-icons/go';
 import Records from './Records.js';
+import axios from 'axios';
 import styled from 'styled-components';
 import { textColor } from '../../constants/colors.js';
+import { useNavigate } from 'react-router-dom';
 
-export default function HomePage() {
+export default function MyWalletPage() {
 	const navigate = useNavigate();
+	const [records, setRecords] = useState(['a']);
+
+	useEffect(() => {
+		// if (localStorage.token !== undefined) {
+		const config = { headers: { Authorization: `Bearer ${localStorage.token}` } };
+		axios
+			.get(`${BASE_URL}/wallet`, config)
+			.then((res) => {
+				setRecords(res.data);
+			})
+			.catch((err) => {
+				navigate('/');
+				console.log(err.response.data);
+			});
+		// } else {
+		// 	navigate('/');
+		// }
+	}, []);
+
+	function signOut() {
+		if (window.confirm('Tem deseja que deseja deslogar?')) {
+			navigate('/');
+		}
+	}
+
 	return (
 		<HomeContainer>
 			<Header>
 				<h1>Olá, Fulano</h1>
-				<Link to='/'>
-					<GoSignOut color='#fff' size='23px' />
-				</Link>
+				<GoSignOut color='#fff' size='23px' onClick={signOut} />
 			</Header>
-			<RecordsContainer>
+			<RecordsContainer display={records.length === 0 ? 'true' : 'false'}>
 				<span>Não há registros de entrada ou saída</span>
-				<Records />
-				<Balance>
+				{records.length === 0 ? '' : <Records records={records} setRecords={setRecords} />}
+				<Balance display={records.length === 0 ? 'true' : 'false'}>
 					<h1>SALDO</h1>
 					<h2>300,00</h2>
 				</Balance>
@@ -64,7 +90,7 @@ const Header = styled.div`
 const RecordsContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: ${(props) => (props.display === 'true' ? 'center' : 'space-between')};
 	align-items: center;
 	width: 100%;
 	height: 70vh;
@@ -72,7 +98,7 @@ const RecordsContainer = styled.div`
 	background-color: #fff;
 	padding: 23px 12px 12px 12px;
 	span {
-		display: none;
+		display: ${(props) => (props.display === 'true' ? 'initial' : 'none')};
 		width: 180px;
 		color: #868686;
 		font-weight: 400;
@@ -83,7 +109,7 @@ const RecordsContainer = styled.div`
 `;
 
 const Balance = styled.div`
-	display: flex;
+	display: ${(props) => (props.display === 'true' ? 'none' : 'flex')};
 	justify-content: space-between;
 	align-items: center;
 	font-size: 17px;

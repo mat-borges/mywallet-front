@@ -1,18 +1,18 @@
 import styled from 'styled-components';
+import { walletRecords } from '../../constants/mock.js';
 
-export default function Records() {
+export default function Records({ records, setRecords }) {
 	return (
 		<RecordsBox>
-			<Record>
-				<h1>30/11</h1>
-				<h2>Testando uma descrição grande o suficiente pra ultrapassar a linha</h2>
-				<h3>500,00</h3>
-			</Record>
-			<Record>
-				<h1>30/11</h1>
-				<h2>Almoço</h2>
-				<h3>500,00</h3>
-			</Record>
+			{walletRecords.map((data, i) => {
+				return (
+					<Record key={i} color={data.type === 'income' ? '#03AC00' : '#C70000'}>
+						<h1>{data.date}</h1>
+						<h2>{data.description}</h2>
+						<h3>{data.value}</h3>
+					</Record>
+				);
+			})}
 		</RecordsBox>
 	);
 }
@@ -43,6 +43,6 @@ const Record = styled.div`
 		}
 	}
 	h3 {
-		color: #03ac00;
+		color: ${(props) => props.color};
 	}
 `;

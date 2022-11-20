@@ -11,14 +11,13 @@ import { useState } from 'react';
 export default function SignUpPage() {
 	const navigate = useNavigate();
 	const [registering, setRegistering] = useState(false);
-	const [user, setUser] = useState({ name: '', email: '', password: '' });
-	const [confirmPass, setConfirmPass] = useState('');
+	const [user, setUser] = useState({ name: '', email: '', password: '', confirmPass: '' });
 	const [validate, setValidate] = useState(true);
 
 	function signUp(e) {
 		e.preventDefault();
 		setRegistering(true);
-		if (user.password !== confirmPass) {
+		if (user.password !== user.confirmPass) {
 			setValidate(false);
 			setRegistering(false);
 			return;
@@ -37,20 +36,8 @@ export default function SignUpPage() {
 			});
 	}
 
-	function name(value) {
-		const newUser = { ...user };
-		newUser.name = value;
-		setUser(newUser);
-	}
-	function email(value) {
-		const newUser = { ...user };
-		newUser.email = value;
-		setUser(newUser);
-	}
-	function password(value) {
-		const newUser = { ...user };
-		newUser.password = value;
-		setUser(newUser);
+	function handleForm(e) {
+		setUser({ ...user, [e.target.name]: e.target.value });
 	}
 
 	return (
@@ -60,36 +47,40 @@ export default function SignUpPage() {
 			<h1>MyWallet</h1>
 			<form onSubmit={signUp}>
 				<input
+					name='name'
 					type='text'
 					placeholder='Nome'
 					required
 					disabled={registering === true ? 'disabled' : ''}
 					value={user.name}
-					onChange={(e) => name(e.target.value)}
+					onChange={handleForm}
 				/>
 				<input
+					name='email'
 					type='email'
 					placeholder='Email'
 					required
 					disabled={registering === true ? 'disabled' : ''}
 					value={user.email}
-					onChange={(e) => email(e.target.value)}
+					onChange={handleForm}
 				/>
 				<input
+					name='password'
 					type='password'
 					placeholder='Senha'
 					required
 					disabled={registering === true ? 'disabled' : ''}
 					value={user.password}
-					onChange={(e) => password(e.target.value)}
+					onChange={handleForm}
 				/>
 				<input
+					name='confirmPass'
 					type='password'
 					placeholder='Confirme a senha'
 					required
 					disabled={registering === true ? 'disabled' : ''}
-					value={confirmPass}
-					onChange={(e) => setConfirmPass(e.target.value)}
+					value={user.confirmPass}
+					onChange={handleForm}
 				/>
 				<span>
 					<FiAlertTriangle color='#ff3333' />

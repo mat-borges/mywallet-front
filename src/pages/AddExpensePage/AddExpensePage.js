@@ -1,21 +1,54 @@
+import { BASE_URL } from '../../constants/urls.js';
+import axios from 'axios';
 import styled from 'styled-components';
 import { textColor } from '../../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function AddExpensePage() {
 	const navigate = useNavigate();
+	const [form, setForm] = useState({ value: '', description: '', type: 'expense' });
+
 	function addExpense(e) {
 		e.preventDefault();
-		navigate('/home');
+		axios
+			.post(`${BASE_URL}/wallet`, form)
+			.then((res) => {
+				console.log(res);
+				navigate('/mywallet');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
+
+	function handleForm(e) {
+		setForm({ ...form, [e.target.name]: e.target.value });
+	}
+	console.log(form);
+
 	return (
 		<AddExpenseContainer>
 			<Header>
 				<h1>Nova saída</h1>
 			</Header>
 			<form onSubmit={addExpense}>
-				<input type='number' step='0.01' name='quantity' min='0' placeholder='Valor' />
-				<input type='text' placeholder='Descrição' />
+				<input
+					name='value'
+					type='number'
+					placeholder='Valor'
+					required
+					value={form.value}
+					onChange={handleForm}
+				/>
+				<input
+					name='description'
+					type='text'
+					placeholder='Descrição'
+					required
+					value={form.description}
+					onChange={handleForm}
+				/>
 				<button type='submit'>Salvar saída</button>
 			</form>
 		</AddExpenseContainer>
@@ -36,6 +69,9 @@ const AddExpenseContainer = styled.div`
 		width: 100%;
 		input {
 			margin-bottom: 15px;
+			width: 100%;
+		}
+		button {
 			width: 100%;
 		}
 	}

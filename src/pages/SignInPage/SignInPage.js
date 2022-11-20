@@ -30,15 +30,8 @@ export default function SignInPage() {
 			});
 	}
 
-	function email(value) {
-		const newUser = { ...user };
-		newUser.email = value;
-		setUser(newUser);
-	}
-	function password(value) {
-		const newUser = { ...user };
-		newUser.password = value;
-		setUser(newUser);
+	function handleForm(e) {
+		setUser({ ...user, [e.target.name]: e.target.value });
 	}
 
 	return (
@@ -48,24 +41,22 @@ export default function SignInPage() {
 				<input
 					type='email'
 					placeholder='Email'
+					name='email'
 					required
 					disabled={logginIn === true ? 'disabled' : ''}
 					value={user.email}
-					onChange={(e) => email(e.target.value)}
+					onChange={handleForm}
 				/>
 				<input
 					type='password'
 					placeholder='Senha'
+					name='password'
 					required
 					disabled={logginIn === true ? 'disabled' : ''}
 					value={user.password}
-					onChange={(e) => password(e.target.value)}
+					onChange={handleForm}
 				/>
-				<button
-					type='submit'
-					disabled={logginIn === true ? 'disabled' : ''}
-					value={user.email}
-					onChange={(e) => email(e.target.value)}>
+				<button type='submit' disabled={logginIn === true ? 'disabled' : ''}>
 					{logginIn === true ? <ThreeDots color='#ffffff' /> : 'Entrar'}
 				</button>
 			</form>
