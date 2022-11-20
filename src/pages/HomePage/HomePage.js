@@ -2,9 +2,9 @@ import { CgAdd, CgRemove } from 'react-icons/cg';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { GoSignOut } from 'react-icons/go';
-import Records from '../components/HomePage/Records';
+import Records from './Records.js';
 import styled from 'styled-components';
-import { textColor } from '../constants/colors';
+import { textColor } from '../../constants/colors.js';
 
 export default function HomePage() {
 	const navigate = useNavigate();

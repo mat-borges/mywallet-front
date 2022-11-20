@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { textColor } from '../constants/colors';
+import { textColor } from '../../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
 
 export default function AddExpensePage() {
