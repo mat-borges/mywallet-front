@@ -17,6 +17,7 @@ export default function SignInPage() {
 
 	useEffect(() => {
 		if (localStorage.token) {
+			setUserInfo({ token: localStorage.token, name: localStorage.name });
 			navigate('/mywallet');
 		}
 	});
