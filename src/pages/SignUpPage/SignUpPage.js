@@ -13,6 +13,7 @@ export default function SignUpPage() {
 	const [registering, setRegistering] = useState(false);
 	const [user, setUser] = useState({ name: '', email: '', password: '', confirmPass: '' });
 	const [validate, setValidate] = useState(true);
+	const [showPassword, setShowPassword] = useState(false);
 
 	function signUp(e) {
 		e.preventDefault();
@@ -24,14 +25,16 @@ export default function SignUpPage() {
 		} else {
 			setValidate(true);
 		}
+		const body = { name: user.name, email: user.email, password: user.password };
 		axios
-			.post(`${BASE_URL}/auth/sign-up`, user)
+			.post(`${BASE_URL}/auth/sign-up`, body)
 			.then(() => {
 				alert('Usuário cadastrado com sucesso!');
 				navigate('/');
 			})
 			.catch((err) => {
-				console.log(err);
+				console.log(err.response.data);
+				alert(err.response.data.message);
 				setRegistering(false);
 			});
 	}
@@ -66,7 +69,7 @@ export default function SignUpPage() {
 				/>
 				<input
 					name='password'
-					type='password'
+					type={showPassword ? 'text' : 'password'}
 					placeholder='Senha'
 					required
 					disabled={registering === true ? 'disabled' : ''}
@@ -75,13 +78,17 @@ export default function SignUpPage() {
 				/>
 				<input
 					name='confirmPass'
-					type='password'
+					type={showPassword ? 'text' : 'password'}
 					placeholder='Confirme a senha'
 					required
 					disabled={registering === true ? 'disabled' : ''}
 					value={user.confirmPass}
 					onChange={handleForm}
 				/>
+				<span>
+					<input type='checkbox' id='showpassword' onChange={() => setShowPassword(!showPassword)} />
+					<label for='showpassword'>Show Password</label>
+				</span>
 				<span>
 					<FiAlertTriangle color='#ff3333' />
 					<p>As senhas devem ser iguais</p>
@@ -111,6 +118,16 @@ const SignUpContainer = styled.div`
 			width: 50%;
 		}
 		span {
+			:first-of-type {
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				color: #fff;
+				height: 20px;
+				width: 100%;
+				margin: 10px;
+				font-weight: 500;
+			}
 			display: ${(props) => props.display};
 			justify-content: flex-start;
 			align-items: center;
@@ -131,6 +148,11 @@ const SignUpContainer = styled.div`
 			:nth-child(4) {
 				background-color: ${(props) => props.backColor};
 			}
+		}
+		input[type='checkbox'] {
+			height: 0.7em;
+			width: 0.7em;
+			margin: 0 10px;
 		}
 		button {
 			display: flex;

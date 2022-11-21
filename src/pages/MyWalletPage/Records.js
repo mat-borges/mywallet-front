@@ -1,15 +1,20 @@
+import { MdDeleteForever } from 'react-icons/md';
 import styled from 'styled-components';
-import { walletRecords } from '../../constants/mock.js';
 
-export default function Records({ records, setRecords }) {
+export default function Records({ records }) {
+	function removeEntry(data) {
+		console.log(data._id);
+	}
 	return (
 		<RecordsBox>
-			{walletRecords.map((data, i) => {
+			{records.map((data, i) => {
 				return (
 					<Record key={i} color={data.type === 'income' ? '#03AC00' : '#C70000'}>
 						<h1>{data.date}</h1>
 						<h2>{data.description}</h2>
-						<h3>{data.value}</h3>
+						<h3>
+							{data.value} <MdDeleteForever color='#c6c6c6' onClick={() => removeEntry(data)} />
+						</h3>
 					</Record>
 				);
 			})}
@@ -43,6 +48,9 @@ const Record = styled.div`
 		}
 	}
 	h3 {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		color: ${(props) => props.color};
 	}
 `;

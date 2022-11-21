@@ -1,37 +1,44 @@
 import { CgAdd, CgRemove } from 'react-icons/cg';
+import { accentColor, baseColor, textColor } from '../../constants/colors.js';
 import { useEffect, useState } from 'react';
 
 import { BASE_URL } from '../../constants/urls.js';
 import { GoSignOut } from 'react-icons/go';
+import { ProgressBar } from 'react-loader-spinner';
 import Records from './Records.js';
 import axios from 'axios';
 import styled from 'styled-components';
-import { textColor } from '../../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
 
 export default function MyWalletPage() {
 	const navigate = useNavigate();
-	const [records, setRecords] = useState(['a']);
+	const [records, setRecords] = useState([]);
+	const [balance, setBalance] = useState('');
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// if (localStorage.token !== undefined) {
-		const config = { headers: { Authorization: `Bearer ${localStorage.token}` } };
-		axios
-			.get(`${BASE_URL}/wallet`, config)
-			.then((res) => {
-				setRecords(res.data);
-			})
-			.catch((err) => {
-				navigate('/');
-				console.log(err.response.data);
-			});
-		// } else {
-		// 	navigate('/');
-		// }
+		if (localStorage.token !== undefined) {
+			const config = { headers: { Authorization: `Bearer ${localStorage.token}` } };
+			axios
+				.get(`${BASE_URL}/wallet`, config)
+				.then((res) => {
+					setRecords(res.data.wallet);
+					setBalance(res.data.balance);
+					setLoading(false);
+				})
+				.catch((err) => {
+					console.log(err.response.data);
+					navigate('/');
+				});
+		} else {
+			navigate('/');
+		}
 	}, []);
 
 	function signOut() {
 		if (window.confirm('Tem deseja que deseja deslogar?')) {
+			localStorage.removeItem('name');
+			localStorage.removeItem('token');
 			navigate('/');
 		}
 	}
@@ -39,17 +46,27 @@ export default function MyWalletPage() {
 	return (
 		<HomeContainer>
 			<Header>
-				<h1>Olá, Fulano</h1>
+				<h1>Olá, {localStorage.name}</h1>
 				<GoSignOut color='#fff' size='23px' onClick={signOut} />
 			</Header>
-			<RecordsContainer display={records.length === 0 ? 'true' : 'false'}>
-				<span>Não há registros de entrada ou saída</span>
-				{records.length === 0 ? '' : <Records records={records} setRecords={setRecords} />}
-				<Balance display={records.length === 0 ? 'true' : 'false'}>
-					<h1>SALDO</h1>
-					<h2>300,00</h2>
-				</Balance>
-			</RecordsContainer>
+			{loading ? (
+				<RecordsContainer display={records.length === 0 ? 'true' : 'false'}>
+					<span>
+						<ProgressBar borderColor={baseColor} barColor={accentColor} />
+					</span>
+				</RecordsContainer>
+			) : (
+				<RecordsContainer display={records.length === 0 ? 'true' : 'false'}>
+					<span>Não há registros de entrada ou saída</span>
+					{records.length === 0 ? '' : <Records records={records} />}
+					<Balance
+						display={records.length === 0 ? 'true' : 'false'}
+						color={balance < 0 ? '#C70000' : '#03AC00'}>
+						<h1>SALDO</h1>
+						<h2>{balance.replace('-', '')}</h2>
+					</Balance>
+				</RecordsContainer>
+			)}
 			<ButtonsBox>
 				<button onClick={() => navigate('/addincome')}>
 					<CgAdd color='#fff' size='22px' />
@@ -122,7 +139,7 @@ const Balance = styled.div`
 	}
 	h2 {
 		font-weight: 400;
-		color: #03ac00;
+		color: ${(props) => props.color};
 	}
 `;
 

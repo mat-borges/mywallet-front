@@ -1,31 +1,35 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useContext, useState } from 'react';
 
 import { BASE_URL } from '../../constants/urls.js';
 import { ThreeDots } from 'react-loader-spinner';
+import UserContext from '../../components/UserContext.js';
 import axios from 'axios';
 import styled from 'styled-components';
 import { textColor } from '../../constants/colors.js';
-import { useState } from 'react';
 
 export default function SignInPage() {
 	const navigate = useNavigate();
 	const [logginIn, setLoggingIn] = useState(false);
 	const [user, setUser] = useState({ email: '', password: '' });
+	const [showPassword, setShowPassword] = useState(false);
+	const { setUserInfo } = useContext(UserContext);
 
 	function signin(e) {
 		e.preventDefault();
+		const body = { ...user };
 
 		setLoggingIn(true);
 		axios
-			.post(`${BASE_URL}/auth/sing-in`, user)
+			.post(`${BASE_URL}/auth/sign-in`, body)
 			.then((res) => {
-				console.log(res);
+				setUserInfo(res.data);
 				localStorage.setItem('token', res.data.token);
 				localStorage.setItem('name', res.data.name);
-				navigate('/home');
+				navigate('/mywallet');
 			})
 			.catch((err) => {
-				console.log(err);
+				console.log(err.response);
 				setLoggingIn(false);
 			});
 	}
@@ -48,7 +52,7 @@ export default function SignInPage() {
 					onChange={handleForm}
 				/>
 				<input
-					type='password'
+					type={showPassword ? 'text' : 'password'}
 					placeholder='Senha'
 					name='password'
 					required
@@ -56,6 +60,10 @@ export default function SignInPage() {
 					value={user.password}
 					onChange={handleForm}
 				/>
+				<span>
+					<input type='checkbox' id='showpassword' onChange={() => setShowPassword(!showPassword)} />
+					<label htmlFor='showpassword'>Show Password</label>
+				</span>
 				<button type='submit' disabled={logginIn === true ? 'disabled' : ''}>
 					{logginIn === true ? <ThreeDots color='#ffffff' /> : 'Entrar'}
 				</button>
@@ -80,10 +88,25 @@ const SignInContainer = styled.div`
 		@media (min-width: 660px) {
 			width: 50%;
 		}
+		span {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			color: #fff;
+			height: 20px;
+			width: 100%;
+			margin: 10px;
+			font-weight: 500;
+		}
 		input {
 			width: 100%;
 			margin: 0 25px;
 			margin-bottom: 13px;
+		}
+		input[type='checkbox'] {
+			height: 0.7em;
+			width: 0.7em;
+			margin: 0 10px;
 		}
 		button {
 			display: flex;

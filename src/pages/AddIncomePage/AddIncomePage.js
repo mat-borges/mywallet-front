@@ -1,36 +1,54 @@
+import { useContext, useEffect, useState } from 'react';
+
+import { AiOutlineRollback } from 'react-icons/ai';
 import { BASE_URL } from '../../constants/urls.js';
+import { ThreeDots } from 'react-loader-spinner';
+import UserContext from '../../components/UserContext.js';
 import axios from 'axios';
 import styled from 'styled-components';
 import { textColor } from '../../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 export default function AddIncomePage() {
 	const navigate = useNavigate();
-	const [form, setForm] = useState({ value: '', description: '', type: 'income' });
+	const { userInfo } = useContext(UserContext);
+	const [form, setForm] = useState({ description: '', value: '', type: 'income' });
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		if (!localStorage.token) {
+			navigate('/');
+		}
+	});
 
 	function addIncome(e) {
 		e.preventDefault();
+		const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+		const body = { ...form };
+		setLoading(true);
+
 		axios
-			.post(`${BASE_URL}/wallet`, form)
+			.post(`${BASE_URL}/wallet`, body, config)
 			.then((res) => {
-				console.log(res);
+				alert('Entrada adicionada com sucesso!');
+				setLoading(false);
 				navigate('/mywallet');
 			})
 			.catch((err) => {
-				console.log(err);
+				alert(err.response.data.message);
+				setLoading(false);
 			});
 	}
 
 	function handleForm(e) {
 		setForm({ ...form, [e.target.name]: e.target.value });
 	}
-	console.log(form);
 
 	return (
 		<AddIncomeContainer>
 			<Header>
 				<h1>Nova entrada</h1>
+				<AiOutlineRollback color='#fff' size='1.5em' onClick={() => navigate('/mywallet')} />
 			</Header>
 			<form onSubmit={addIncome}>
 				<input
@@ -49,7 +67,7 @@ export default function AddIncomePage() {
 					value={form.description}
 					onChange={handleForm}
 				/>
-				<button type='submit'>Salvar entrada</button>
+				<button type='submit'>{loading ? <ThreeDots color='#ffffff' /> : 'Salvar entrada'}</button>
 			</form>
 		</AddIncomeContainer>
 	);
@@ -73,6 +91,9 @@ const AddIncomeContainer = styled.div`
 			width: 100%;
 		}
 		button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
 			width: 100%;
 		}
 	}
