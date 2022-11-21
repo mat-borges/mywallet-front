@@ -11,20 +11,22 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AddIncomePage() {
 	const navigate = useNavigate();
-	const { userInfo } = useContext(UserContext);
+	const { userInfo, setUserInfo } = useContext(UserContext);
 	const [form, setForm] = useState({ description: '', value: '', type: 'income' });
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		if (!localStorage.token) {
 			navigate('/');
+		} else {
+			setUserInfo({ name: localStorage.name, token: localStorage.token });
 		}
-	});
+	}, []);
 
 	function addIncome(e) {
 		e.preventDefault();
 		const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-		const body = { ...form };
+		const body = { ...form, value: Number(form.value).toFixed(2) };
 		setLoading(true);
 
 		axios

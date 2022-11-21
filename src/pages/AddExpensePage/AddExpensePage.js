@@ -11,21 +11,23 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AddExpensePage() {
 	const navigate = useNavigate();
-	const { userInfo } = useContext(UserContext);
+	const { userInfo, setUserInfo } = useContext(UserContext);
 	const [form, setForm] = useState({ value: '', description: '', type: 'expense' });
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		if (!localStorage.token) {
 			navigate('/');
+		} else {
+			setUserInfo({ name: localStorage.name, token: localStorage.token });
 		}
-	});
+	}, []);
 
 	function addExpense(e) {
 		e.preventDefault();
 
 		const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-		const body = { ...form };
+		const body = { ...form, value: Number(form.value).toFixed(2) };
 		setLoading(true);
 
 		axios
@@ -68,7 +70,7 @@ export default function AddExpensePage() {
 					value={form.description}
 					onChange={handleForm}
 				/>
-				<button type='submit'>{loading ? <ThreeDots color='#ffffff' /> : 'Salvar entrada'}</button>
+				<button type='submit'>{loading ? <ThreeDots color='#ffffff' /> : 'Salvar saída'}</button>
 			</form>
 		</AddExpenseContainer>
 	);

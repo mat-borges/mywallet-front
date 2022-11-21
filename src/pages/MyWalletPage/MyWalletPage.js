@@ -1,23 +1,27 @@
 import { CgAdd, CgRemove } from 'react-icons/cg';
 import { accentColor, baseColor, textColor } from '../../constants/colors.js';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { BASE_URL } from '../../constants/urls.js';
 import { GoSignOut } from 'react-icons/go';
 import { ProgressBar } from 'react-loader-spinner';
 import Records from './Records.js';
+import UserContext from '../../components/UserContext.js';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 export default function MyWalletPage() {
 	const navigate = useNavigate();
+	const { setUserInfo } = useContext(UserContext);
 	const [records, setRecords] = useState([]);
 	const [balance, setBalance] = useState('');
 	const [loading, setLoading] = useState(true);
+	const [render, setRender] = useState(false);
 
 	useEffect(() => {
 		if (localStorage.token !== undefined) {
+			setUserInfo({ name: localStorage.name, token: localStorage.token });
 			const config = { headers: { Authorization: `Bearer ${localStorage.token}` } };
 			axios
 				.get(`${BASE_URL}/wallet`, config)
@@ -33,7 +37,7 @@ export default function MyWalletPage() {
 		} else {
 			navigate('/');
 		}
-	}, []);
+	}, [render]);
 
 	function signOut() {
 		if (window.confirm('Tem deseja que deseja deslogar?')) {
@@ -58,12 +62,16 @@ export default function MyWalletPage() {
 			) : (
 				<RecordsContainer display={records.length === 0 ? 'true' : 'false'}>
 					<span>Não há registros de entrada ou saída</span>
-					{records.length === 0 ? '' : <Records records={records} />}
+					{records.length === 0 ? (
+						''
+					) : (
+						<Records records={records} setRender={setRender} render={render} />
+					)}
 					<Balance
 						display={records.length === 0 ? 'true' : 'false'}
 						color={balance < 0 ? '#C70000' : '#03AC00'}>
 						<h1>SALDO</h1>
-						<h2>{balance.replace('-', '')}</h2>
+						<h2>{Number(balance).toFixed(2).replace('.', ',')}</h2>
 					</Balance>
 				</RecordsContainer>
 			)}
