@@ -46,7 +46,6 @@ export default function MyWalletPage() {
 			axios
 				.delete(`${BASE_URL}/sign-out`, config)
 				.then((res) => {
-					console.log('entrou');
 					localStorage.removeItem('name');
 					localStorage.removeItem('token');
 					setUserInfo({});
