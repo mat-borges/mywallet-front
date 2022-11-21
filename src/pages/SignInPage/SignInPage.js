@@ -17,7 +17,7 @@ export default function SignInPage() {
 
 	function signin(e) {
 		e.preventDefault();
-		const body = { ...user };
+		const body = { ...user, email: user.email.toLowerCase() };
 
 		setLoggingIn(true);
 		axios

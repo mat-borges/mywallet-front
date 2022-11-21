@@ -25,7 +25,7 @@ export default function SignUpPage() {
 		} else {
 			setValidate(true);
 		}
-		const body = { name: user.name, email: user.email, password: user.password };
+		const body = { name: user.name, email: user.email.toLowerCase(), password: user.password };
 		axios
 			.post(`${BASE_URL}/auth/sign-up`, body)
 			.then(() => {
