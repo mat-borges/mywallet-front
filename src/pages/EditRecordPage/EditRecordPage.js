@@ -12,21 +12,24 @@ import { textColor } from '../../constants/colors.js';
 export default function EditRecordPage() {
 	const navigate = useNavigate();
 	const location = useLocation();
-
 	const { userInfo, setUserInfo } = useContext(UserContext);
-	const [form, setForm] = useState({
-		description: location.state.data.description,
-		value: location.state.data.value,
-		type: location.state.data.type,
-	});
+	const [form, setForm] = useState({ description: '', value: '', type: '' });
 	const [loading, setLoading] = useState(false);
+	const [editType, setEditType] = useState('');
 
 	useEffect(() => {
 		if (!localStorage.token) {
 			navigate('/');
-		} else if (!userInfo.token) {
+		} else if (!userInfo.token || !location.state.data) {
 			setUserInfo({ name: localStorage.name, token: localStorage.token });
 			navigate('/mywallet');
+		} else {
+			setEditType(location.state.data.type);
+			setForm({
+				description: location.state.data.description,
+				value: location.state.data.value,
+				type: location.state.data.type,
+			});
 		}
 	}, []);
 
@@ -57,7 +60,7 @@ export default function EditRecordPage() {
 	return (
 		<EditRecordContainer>
 			<Header>
-				<h1>Editar {location.state.data.type === 'income' ? 'Entrada' : 'Saída'}</h1>
+				<h1>Editar {editType === 'income' ? 'Entrada' : 'Saída'}</h1>
 				<AiOutlineRollback color='#fff' size='1.5em' onClick={() => navigate('/mywallet')} />
 			</Header>
 			<form onSubmit={addIncome}>
@@ -81,7 +84,7 @@ export default function EditRecordPage() {
 					{loading ? (
 						<ThreeDots color='#ffffff' />
 					) : (
-						`Atualizar ${location.state.data.type === 'income' ? 'Entrada' : 'Saída'}`
+						`Atualizar ${editType === 'income' ? 'Entrada' : 'Saída'}`
 					)}
 				</button>
 			</form>
