@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { BASE_URL } from '../../constants/urls.js';
 import { ThreeDots } from 'react-loader-spinner';
@@ -14,6 +14,12 @@ export default function SignInPage() {
 	const [user, setUser] = useState({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState(false);
 	const { setUserInfo } = useContext(UserContext);
+
+	useEffect(() => {
+		if (localStorage.token) {
+			navigate('/mywallet');
+		}
+	});
 
 	function signin(e) {
 		e.preventDefault();
