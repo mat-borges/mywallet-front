@@ -41,9 +41,20 @@ export default function MyWalletPage() {
 
 	function signOut() {
 		if (window.confirm('Tem deseja que deseja deslogar?')) {
-			localStorage.removeItem('name');
-			localStorage.removeItem('token');
-			navigate('/');
+			const config = { headers: { Authorization: `Bearer ${localStorage.token}` } };
+
+			axios
+				.delete(`${BASE_URL}/sign-out`, config)
+				.then((res) => {
+					console.log('entrou');
+					localStorage.removeItem('name');
+					localStorage.removeItem('token');
+					setUserInfo({});
+					navigate('/');
+				})
+				.catch((err) => {
+					console.log(err.response);
+				});
 		}
 	}
 
