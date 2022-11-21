@@ -4,9 +4,12 @@ import UserContext from '../../components/UserContext';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Records({ records, render, setRender }) {
 	const { userInfo } = useContext(UserContext);
+	const navigate = useNavigate();
+
 	function removeEntry(data) {
 		const id = data._id;
 		const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
@@ -28,7 +31,7 @@ export default function Records({ records, render, setRender }) {
 				return (
 					<Record key={i} color={data.type === 'income' ? '#03AC00' : '#C70000'}>
 						<h1>{data.date}</h1>
-						<h2>{data.description}</h2>
+						<h2 onClick={() => navigate(`/editrecord`, { state: { data } })}>{data.description}</h2>
 						<h3>{data.value.replace('.', ',')}</h3>
 						<MdDeleteForever color='#c6c6c6' size='18px' onClick={() => removeEntry(data)} />
 					</Record>
@@ -41,7 +44,6 @@ export default function Records({ records, render, setRender }) {
 const RecordsBox = styled.div`
 	display: flex;
 	flex-direction: column;
-	justify-content: space-around;
 	width: 100%;
 	overflow-y: auto;
 `;
@@ -49,7 +51,7 @@ const RecordsBox = styled.div`
 const Record = styled.div`
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	margin-bottom: 1.5em;
 	font-weight: 400;
 	font-size: 16px;
@@ -57,13 +59,17 @@ const Record = styled.div`
 		color: #c6c6c6;
 	}
 	h2 {
-		display: flex;
+		display: inline-block;
 		justify-content: flex-start;
 		width: 50%;
 		color: #000;
 		@media (min-width: 660px) {
 			width: 70%;
 		}
+		word-break: break-all;
+		-webkit-hyphens: auto;
+		-moz-hyphens: auto;
+		hyphens: auto;
 	}
 	h3 {
 		display: flex;

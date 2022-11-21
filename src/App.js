@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import AddExpensePage from './pages/AddExpensePage/AddExpensePage.js';
 import AddIncomePage from './pages/AddIncomePage/AddIncomePage.js';
+import EditRecordPage from './pages/EditRecordPage/EditRecordPage.js';
 import GlobalStyle from './assets/styles/GlobalStyle.js';
 import MyWalletPage from './pages/MyWalletPage/MyWalletPage.js';
 import SignInPage from './pages/SignInPage/SignInPage.js';
@@ -19,6 +20,7 @@ export default function App() {
 					<Route path='/mywallet' element={<MyWalletPage />} />
 					<Route path='/addincome' element={<AddIncomePage />} />
 					<Route path='/addexpense' element={<AddExpensePage />} />
+					<Route path='/editrecord' element={<EditRecordPage />} />
 				</Routes>
 			</UserProvider>
 		</BrowserRouter>
