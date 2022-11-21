@@ -43,12 +43,13 @@ const RecordsBox = styled.div`
 	flex-direction: column;
 	justify-content: space-around;
 	width: 100%;
+	overflow-y: auto;
 `;
 
 const Record = styled.div`
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	margin-bottom: 1.5em;
 	font-weight: 400;
 	font-size: 16px;

@@ -139,15 +139,22 @@ const Balance = styled.div`
 	align-items: center;
 	font-size: 17px;
 	width: 100%;
+	margin-top: 10px;
 	@media (min-width: 660px) {
-		width: 40%;
+		justify-content: flex-end;
 	}
 	h1 {
 		font-weight: 700;
+		@media (min-width: 660px) {
+			margin-right: 50px;
+		}
 	}
 	h2 {
 		font-weight: 400;
 		color: ${(props) => props.color};
+		@media (min-width: 660px) {
+			margin-right: 50px;
+		}
 	}
 `;
 
